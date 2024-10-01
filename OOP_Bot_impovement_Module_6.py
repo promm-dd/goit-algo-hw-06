@@ -8,10 +8,12 @@ class Name(Field): #класс для хранения имени контакт
     pass
 class Phone(Field):
     def __init__(self, phone):
-        if len(phone) == 10: 
-            super().__init__(phone) # эта строка вызывает конструктор класса  Field и передает в него телефонный номер. То есть при успешной првоерке номера, мы передаем номер в конструктор класса Field где он будет сохранен в атрибуте value
-        else:
+        if not phone.isdigit():
+            raise ValueError("phone number must contain only digits")
+        if len(phone) != 10: 
             raise ValueError("phone number must have 10 digits")
+        super().__init__(phone) # эта строка вызывает конструктор класса  Field и передает в него телефонный номер. То есть при успешной првоерке номера, мы передаем номер в конструктор класса Field где он будет сохранен в атрибуте value
+            
 class Record:
     def __init__(self, name) :
         self.name = Name(name) #здесь создаем обьект класса Name котор хранит имя контакта/ мы используем класс Name чтобы унаследов его свойства 
@@ -21,6 +23,10 @@ class Record:
     def remove_phone(self, phone): 
         self.phones =[p for p in self.phones if p.value != phone]  #p.value атрибут обьекта Phone
     def edit_phone(self, old_phone, new_phone):
+        if not self.find_phone(old_phone):
+            raise ValueError(f"old phone {old_phone} not found")
+        if not new_phone.isdigit() or len(new_phone) != 10:
+            raise ValueError(f"new phone {new_phone} invalid")
         self.remove_phone(old_phone)
         self.add_phone(new_phone)
     def find_phone(self, phone):
